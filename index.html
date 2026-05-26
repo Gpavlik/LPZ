@@ -7,6 +7,22 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css" />
   <style>
+     body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #009400, #004d00);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-direction: column;
+      color: #fff;
+     }
+      .map { margin-top: 10px; 
+        width: 90%; 
+        max-width: 1440px;
+      border: 1px solid #ccc;
+       border-radius: 5px; 
+      
+      }
     #map { height: 800px; }
     #controls { margin: 10px 0; }
     table { border-collapse: collapse; width: 100%; margin-top: 10px; }
@@ -20,7 +36,29 @@
   font-size: 14px;
   border-radius: 5px;
   line-height: 1.5;
+  color: #333;
 }
+  
+select {
+      width: 300px; 
+      padding: 10px; 
+      border: none; 
+      border-radius: 6px; 
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    button {
+      width: 200px; 
+      padding: 12px; 
+      margin: 10px 15px;
+      background-color: #004d00; 
+      color: #ffffff;
+      border: solid 1px #c2ffc2; 
+      border-radius: 6px; 
+      font-size: 1rem;
+      cursor: pointer; 
+      transition: background 0.3s ease;
+} 
 .legend-color {
   display: inline-block;
   width: 15px;
@@ -30,8 +68,8 @@
   border-radius: 3px;
 }
 .instructions {
-  background: #f9f9f9;
-  padding: 10px;
+  background: #009900;
+  padding: 5px;
   border: 1px solid #ccc;
   margin-bottom: 10px;
 display: flex;
@@ -44,6 +82,7 @@ border-radius: 5px;
 </head>
 <body>
 <h3>Мапа ЛПЗ</h3>
+ <img src="./logo.svg" alt="logo" width="260">
 <div class="instructions">
   <div id="controls">
   <label for="colorSelect">Виберіть колір:</label>
@@ -81,7 +120,7 @@ border-radius: 5px;
   <div><span class="legend-color" style="background:purple"></span> Лабораторії</div>
 </div>
 </div>
-<div id="map"></div>
+<div class="map" id="map"></div>
 <h4>Заклади всередині контурів:</h4>
 <div id="lists"></div>
 
