@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css" />
   <style>
-    #map { height: 900px; }
+    #map { height: 800px; }
     #controls { margin: 10px 0; }
     table { border-collapse: collapse; width: 100%; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 5px; text-align: left; }
@@ -66,7 +66,8 @@
   map.addControl(drawControl);
 
   var allResults = [];
-  const OPENCAGE_KEY = "fa2e36a0856f4d958bb51dfdd0f62428"; // <-- встав свій ключ тут
+  var polygons = [];
+  const OPENCAGE_KEY = "fa2e36a0856f4d958bb51dfdd0f62428"; // <-- свій ключ
 
   function getActiveCategories() {
     return Array.from(document.querySelectorAll(".catFilter:checked")).map(cb => cb.value);
@@ -113,10 +114,10 @@
     var east  = bounds.getEast();
 
     var servers = [
-      "https://overpass.kumi.systems/api/interpreter",
-      "https://overpass.openstreetmap.ru/api/interpreter",
-      "https://overpass.nchc.org.tw/api/interpreter"
-    ];
+  "https://overpass-api.de/api/interpreter", // офіційний
+  "https://overpass.kumi.systems/api/interpreter"
+];
+
 
     var filter = "hospital|clinic|doctors|laboratory";
 
@@ -145,11 +146,10 @@
             var lon = el.lon || (el.center && el.center.lon);
             if (lat && lon) {
               var point = turf.point([lon, lat]);
-              var inside = turf.booleanPointInPolygon(point, polygon);
+              var inside = turf.booleanPointInPolygon(point, polygon.geometry); // важливо!
               if (inside) {
                 var name = el.tags.name || "Без назви";
                 var category = el.tags.amenity || el.tags.healthcare || "невідомо";
-                // робимо повний геореверс через OpenCage
                 getCityRegion(lat, lon, function(city, region, addr) {
                   L.marker([lat, lon]).addTo(map)
                     .bindPopup("<b>" + name + "</b><br>" + addr);
@@ -160,26 +160,25 @@
             }
           });
         })
-                .catch(err => { tryServer(i+1); });
+        .catch(err => { tryServer(i+1); });
     }
     tryServer(0);
   }
 
-  // коли створюється новий контур
+  // створення нового контуру
   map.on(L.Draw.Event.CREATED, function (e) {
     var layer = e.layer;
     var color = document.getElementById("colorSelect").value;
     layer.setStyle({ color: color });
     drawnItems.addLayer(layer);
+    polygons.push({ layer, color });
     var polygon = layer.toGeoJSON();
     var bounds = layer.getBounds();
     loadHospitals(polygon, bounds, color);
   });
 
-  // редагування існуючих контурів
+  // редагування / видалення
   map.on(L.Draw.Event.EDITED, function () { renderTable(); });
-
-  // видалення контурів
   map.on(L.Draw.Event.DELETED, function () { renderTable(); });
 
   // експорт у Excel
@@ -202,36 +201,27 @@
   // очистити всі контури
   function clearAll() {
     drawnItems.clearLayers();
+    polygons = [];
     allResults = [];
     document.getElementById("lists").innerHTML = "";
   }
 
-  // інтерактивний фільтр: при зміні чекбоксів перелік оновлюється
+  // фільтр чекбоксів
   document.querySelectorAll(".catFilter").forEach(cb => {
     cb.addEventListener("change", renderTable);
   });
-  var polygons = []; // масив для збереження контурів
 
-// коли створюється новий контур
-map.on(L.Draw.Event.CREATED, function (e) {
-  var layer = e.layer;
-  var color = document.getElementById("colorSelect").value;
-  layer.setStyle({ color: color });
-  drawnItems.addLayer(layer);
-  polygons.push({ layer, color }); // зберігаємо контур і його колір
-});
-
-// кнопка для запуску пошуку закладів
-function fetchInstitutions() {
-  allResults = [];
-  document.getElementById("lists").innerHTML = "";
-  polygons.forEach(p => {
-    var polygon = p.layer.toGeoJSON();
-    var bounds = p.layer.getBounds();
-    loadHospitals(polygon, bounds, p.color);
-  });
-}
-
+  // кнопка "Завантажити заклади"
+  function fetchInstitutions() {
+    allResults = [];
+    document.getElementById("lists").innerHTML = "";
+    polygons.forEach(p => {
+      var polygon = p.layer.toGeoJSON();
+      var bounds = p.layer.getBounds();
+      loadHospitals(polygon, bounds, p.color);
+    });
+  }
 </script>
+
 </body>
 </html>
