@@ -241,7 +241,8 @@ function getCategoryIcon(category) {
 }
 
 function openRoute(lat, lon) {
-  window.open(`https://www.openstreetmap.org/directions?to=${lat},${lon}`, "_blank");
+  // Відкриває навігацію в Google Maps (на мобільних відкриває додаток мап)
+  window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`, "_blank");
 }
 
 function loadHospitals(polygon, bounds, color) {
