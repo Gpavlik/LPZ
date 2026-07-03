@@ -240,9 +240,16 @@ function getCategoryIcon(category) {
   }
 }
 
-function openRoute(lat, lon) {
-  // Відкриває навігацію в Google Maps (на мобільних відкриває додаток мап)
-  window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`, "_blank");
+function openRoute(lat, lon, provider) {
+  var url = "";
+  if (provider === 'waze') {
+    // Формат deep link для Waze (працює і на мобільних, і в браузері)
+    url = `https://waze.com/ul?ll=${lat},${lon}&navigate=yes`;
+  } else {
+    // Формат для Google Maps
+    url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
+  }
+  window.open(url, "_blank");
 }
 
 function loadHospitals(polygon, bounds, color) {
@@ -291,9 +298,12 @@ function loadHospitals(polygon, bounds, color) {
 
               getCityRegion(lat, lon, function(city, region, addr) {
                 var popupHtml = `
-                  <b>${name}</b><br>${addr}<br>
-                  <button onclick="openRoute(${lat},${lon})">Побудувати маршрут</button>
-                `;
+  <b>${name}</b><br>${addr}<br><br>
+  <div style="display: flex; gap: 5px;">
+    <button onclick="openRoute(${lat},${lon}, 'google')" style="width:auto; padding:5px 10px; margin:0; font-size:12px;">Google Мапи</button>
+    <button onclick="openRoute(${lat},${lon}, 'waze')" style="width:auto; padding:5px 10px; margin:0; font-size:12px; background-color:#2de2e2; color:#000; border:none;">Waze</button>
+  </div>
+`;
                 
                 // Створюємо маркер (але на карту його додасть функція renderTable, якщо чекбокс активний)
                 var marker = L.marker([lat, lon], { icon: icon }).bindPopup(popupHtml);
