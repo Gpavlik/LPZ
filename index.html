@@ -24,7 +24,7 @@
       
       }
     #map { height: 800px; }
-    #controls { margin: 10px 0; }
+    #controls { margin: 18px; }
     table { border-collapse: collapse; width: 100%; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 5px; text-align: left; }
     th { background: #eee; }
@@ -81,10 +81,11 @@ border-radius: 5px;
   </style>
 </head>
 <body>
-<h3>Мапа ЛПЗ</h3>
- <img src="./logo.svg" alt="logo" width="260">
+
 <div class="instructions">
+   <img src="./logo.svg" alt="logo" width="260">
   <div id="controls">
+    <div style="display: none;">
   <label for="colorSelect">Виберіть колір:</label>
   <select id="colorSelect">
     <option value="red">Червоний</option>
@@ -103,6 +104,7 @@ border-radius: 5px;
     <option value="gray">Сірий</option>
     <option value="black">Чорний</option>
   </select>
+  </div>
   <br><br>
   <label><input type="checkbox" class="catFilter" value="hospital" checked> Лікарні</label>
   <label><input type="checkbox" class="catFilter" value="clinic" checked> Клініки</label>
@@ -113,7 +115,7 @@ border-radius: 5px;
   <button onclick="clearAll()">Очистити всі контури</button>
 </div>
 <div id="legend">
-  <h4>Легенда</h4>
+  <!--<p>Легенда</p>-->
   <div><span class="legend-color" style="background:red"></span> Лікарні</div>
   <div><span class="legend-color" style="background:blue"></span> Клініки</div>
   <div><span class="legend-color" style="background:green"></span> ЦПМСД / лікарі</div>
